@@ -1,0 +1,7 @@
+docker build -t github_backup_local_image .
+
+
+docker tag github_backup_local_image:latest vh13294/github-backup:latest
+
+
+docker push vh13294/github-backup:latest

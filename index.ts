@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 type repository = components['schemas']['repository'];
 
 const octokit = new Octokit({
-    auth: 'token',
+    auth: process.env.GITHUB_TOKEN,
 });
 
 async function listAllRepos() {
@@ -36,7 +36,9 @@ async function downloadZip(repo: repository) {
         ref: repo.default_branch,
     });
 
-    writeFileSync(`repo/${repo.name}-${repo.default_branch}.zip`, Buffer.from(data as ArrayBuffer));
+    const backupDir = process.env.BACKUP_DIR;
+    const dir = `${backupDir}/${repo.name}-${repo.default_branch}.zip`;
+    writeFileSync(dir, Buffer.from(data as ArrayBuffer));
 }
 
 function printRepoDetails(repo: repository) {

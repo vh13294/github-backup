@@ -1,5 +1,4 @@
-node_modules/
-
-dist/
-
-repo/
+node_modules
+dist
+repo
+npm-debug.log
