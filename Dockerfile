@@ -15,9 +15,10 @@ FROM node:alpine
 ENV NODE_ENV production
 ENV GITHUB_TOKEN please_enter_your_token
 ENV BACKUP_DIR /github_backup
+ENV CRON "0 2 * * *"
 
 WORKDIR /usr
 COPY package.json ./
 COPY --from=0 /usr/dist .
 RUN npm install --only=production
-CMD ["node","index.js"]
+CMD ["node", "index.js"]
