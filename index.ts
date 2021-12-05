@@ -5,11 +5,25 @@ import { writeFileSync } from 'fs';
 
 type repository = components['schemas']['repository'];
 
-const octokit = new Octokit({
-    auth: process.env.GITHUB_TOKEN,
-});
+function start() {
+    // every day 2am
+    let defaultSchedule = '0 2 * * *';
+    const inputSchedule = process.env.CRON;
 
-async function listAllRepos() {
+    if (inputSchedule && isCronValid(inputSchedule)) {
+        defaultSchedule = inputSchedule;
+    }
+
+    cron.schedule(defaultSchedule, () => {
+        console.log('cron start');
+        const octokit = new Octokit({
+            auth: process.env.GITHUB_TOKEN,
+        });
+        listAllRepos(octokit);
+    });
+}
+
+async function listAllRepos(octokit: Octokit) {
     const { data } = await octokit.rest.repos.listForAuthenticatedUser({
         visibility: 'all',
         affiliation: 'owner',
@@ -19,12 +33,12 @@ async function listAllRepos() {
     console.log(`*** total repos: ${data.length}\n`);
 
     data.forEach((repo) => {
-        downloadZip(repo);
+        downloadZip(octokit, repo);
         printRepoDetails(repo);
     });
 }
 
-async function downloadZip(repo: repository) {
+async function downloadZip(octokit: Octokit, repo: repository) {
     const owner = repo.owner?.login;
 
     if (owner === undefined) {
@@ -52,21 +66,6 @@ function isCronValid(expression: string) {
         /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/,
     );
     return cronRegex.test(expression);
-}
-
-function start() {
-    // every day 2am
-    let defaultSchedule = '0 2 * * *';
-    let inputSchedule = process.env.CRON;
-
-    if (inputSchedule && isCronValid(inputSchedule)) {
-        defaultSchedule = inputSchedule;
-    }
-
-    cron.schedule(defaultSchedule, () => {
-        console.log('cron start');
-        listAllRepos();
-    });
 }
 
 start();
