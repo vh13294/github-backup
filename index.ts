@@ -1,4 +1,3 @@
-import cron from 'node-cron';
 import { Octokit } from '@octokit/rest';
 import { components } from '@octokit/openapi-types';
 import { writeFileSync } from 'fs';
@@ -6,21 +5,10 @@ import { writeFileSync } from 'fs';
 type repository = components['schemas']['repository'];
 
 function start() {
-    // every day 2am
-    let defaultSchedule = '0 2 * * *';
-    const inputSchedule = process.env.CRON;
-
-    if (inputSchedule && isCronValid(inputSchedule)) {
-        defaultSchedule = inputSchedule;
-    }
-
-    cron.schedule(defaultSchedule, () => {
-        console.log('cron start');
-        const octokit = new Octokit({
-            auth: process.env.GITHUB_TOKEN,
-        });
-        listAllRepos(octokit);
+    const octokit = new Octokit({
+        auth: process.env.GITHUB_TOKEN,
     });
+    listAllRepos(octokit);
 }
 
 async function listAllRepos(octokit: Octokit) {
@@ -59,13 +47,6 @@ async function downloadZip(octokit: Octokit, repo: repository) {
 function printRepoDetails(repo: repository) {
     console.log(repo.full_name);
     console.log('Download Completed \n');
-}
-
-function isCronValid(expression: string) {
-    const cronRegex = new RegExp(
-        /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/,
-    );
-    return cronRegex.test(expression);
 }
 
 start();
