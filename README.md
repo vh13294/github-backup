@@ -12,3 +12,8 @@ In your docker
 -   Environment
     -   GITHUB_TOKEN please_enter_your_token
     -   BACKUP_DIR /github_backup
+
+# Details
+
+-   Image is based of linux alpine which has built-in cron
+-   Cron job is running daily at 2:00am
