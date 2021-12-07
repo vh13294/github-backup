@@ -20,10 +20,10 @@ async function listAllRepos(octokit: Octokit) {
 
     console.log(`*** total repos: ${data.length}\n`);
 
-    data.forEach((repo) => {
-        downloadZip(octokit, repo);
+    for (const repo of data) {
+        await downloadZip(octokit, repo);
         printRepoDetails(repo);
-    });
+    }
 }
 
 async function downloadZip(octokit: Octokit, repo: repository) {

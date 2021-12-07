@@ -22,7 +22,8 @@ COPY --from=0 /usr/dist .
 RUN npm install --only=production
 
 # Cron
-COPY ./cron/daily_backup /etc/periodic/daily
+COPY ./cron/root /etc/crontabs/
+COPY ./cron/daily_backup /etc/periodic/daily/
 RUN chmod +x /etc/periodic/daily/daily_backup
 
 CMD ["crond", "-f", "-l", "8"]
