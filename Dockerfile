@@ -15,6 +15,7 @@ FROM node:alpine
 ENV NODE_ENV production
 ENV GITHUB_TOKEN please_enter_your_token
 ENV BACKUP_DIR /github_backup
+ENV TZ Asia/Phnom_Penh
 
 WORKDIR /usr
 COPY package.json ./
