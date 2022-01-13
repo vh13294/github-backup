@@ -1,16 +1,16 @@
-FROM node:alpine
+FROM node:16-alpine
 
 WORKDIR /usr
 COPY package.json ./
 COPY tsconfig.json ./
 COPY index.ts ./
-RUN ls -a
+# RUN ls -a
 RUN npm install
 RUN npm run build
 
 
 ## this is stage two , where the app actually runs
-FROM node:alpine
+FROM node:16-alpine
 
 ENV NODE_ENV production
 ENV GITHUB_TOKEN please_enter_your_token
