@@ -8,7 +8,11 @@ function start() {
     const octokit = new Octokit({
         auth: process.env.GITHUB_TOKEN,
     });
-    listAllRepos(octokit);
+    try {
+        listAllRepos(octokit);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 async function listAllRepos(octokit: Octokit) {
